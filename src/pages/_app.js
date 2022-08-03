@@ -1,12 +1,33 @@
-import '../styles/globals.css';
+import '@/styles/globals.css';
+import '@rainbow-me/rainbowkit/styles.css';
 import { WebBundlr } from '@bundlr-network/client';
 import { AppContext } from '@/context';
 import Layout from '@/components/Layout';
-import { useState, useRef } from 'react';
+import { APP_NAME } from '@/lib/constants';
+import { useState, useRef, useEffect } from 'react';
 import { ethers } from 'ethers';
-import Link from 'next/link';
+import { chain, createClient, WagmiConfig, configureChains } from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+
+const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID;
+
+const { chains, provider } = configureChains(
+  [chain.polygon, chain.polygonMumbai],
+  [alchemyProvider({ apiKey: alchemyId }), publicProvider()]
+);
+
+const { connectors } = getDefaultWallets({ appName: APP_NAME, chains });
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+});
 
 const MyApp = ({ Component, pageProps }) => {
+  const [isMounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const [bundlrInstance, setBundlrInstance] = useState();
   const [balance, setBalance] = useState(0);
 
@@ -14,7 +35,8 @@ const MyApp = ({ Component, pageProps }) => {
   const [currency, setCurrency] = useState('matic');
   const bundlrRef = useRef();
 
-  const initializeBundlr = async () => {
+  const initializeBundlr = async (wagmiProvider) => {
+    //TODO: wagmiProvider does not work when initializing bundlr
     await window.ethereum.enable();
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -38,56 +60,28 @@ const MyApp = ({ Component, pageProps }) => {
     setBalance(ethers.utils.formatEther(balance.toString()));
   };
 
-  /*return (
-    <div>
-      <nav className=''>
-        <Link href='/'>
-          <a>
-            <div className=''>
-              <p className=''>ARWEAVE VIDEO</p>
-            </div>
-          </a>
-        </Link>
-      </nav>
-      <div className=''>
+  if (!isMounted) return null;
+
+  return (
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains}>
         <AppContext.Provider
           value={{
             initializeBundlr,
             bundlrInstance,
+            setBundlrInstance,
             balance,
             fetchBalance,
             currency,
             setCurrency,
           }}
         >
-          <Component {...pageProps} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </AppContext.Provider>
-      </div>
-      <footer className=''>
-        <Link href='/upload'>
-          <a>ADMIN</a>
-        </Link>
-      </footer>
-    </div>
-  ); */
-
-  return (
-    <div>
-      <AppContext.Provider
-        value={{
-          initializeBundlr,
-          bundlrInstance,
-          balance,
-          fetchBalance,
-          currency,
-          setCurrency,
-        }}
-      >
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </AppContext.Provider>
-    </div>
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 };
 

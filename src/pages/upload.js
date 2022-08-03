@@ -1,16 +1,20 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { AppContext } from '../context';
 import { APP_NAME } from '../utils';
 import { useRouter } from 'next/router';
 import { utils } from 'ethers';
 import Select from 'react-select';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useSigner, useProvider, useDisconnect } from 'wagmi';
+
+const ALLOWED_UPLOADER_ADDRESS = process.env.NEXT_PUBLIC_ALLOWED_UPLOAD_ADDR;
 
 const supportedCurrencies = {
   matic: 'matic',
   ethereum: 'ethereum',
-  avalanche: 'avalanche',
-  bnb: 'bnb',
-  arbitrum: 'arbitrum',
+  // avalanche: 'avalanche',
+  // bnb: 'bnb',
+  // arbitrum: 'arbitrum',
 };
 
 const currencyOptions = Object.keys(supportedCurrencies).map((v) => {
@@ -20,15 +24,40 @@ const currencyOptions = Object.keys(supportedCurrencies).map((v) => {
   };
 });
 
+const sports = {
+  football: 'Football',
+  mbasketball: 'Mens Basketball',
+  baseball: 'Baseball',
+};
+
+const sportOptions = Object.keys(sports).map((s) => {
+  return {
+    value: s,
+    label: sports[s],
+  };
+});
+
 const Upload = () => {
-  const { balance, bundlrInstance, initializeBundlr, currency, setCurrency } =
-    useContext(AppContext);
+  const {
+    balance,
+    bundlrInstance,
+    setBundlrInstance,
+    initializeBundlr,
+    currency,
+    setCurrency,
+  } = useContext(AppContext);
   const [file, setFile] = useState();
   const [localVideo, setLocalVideo] = useState();
   const [title, setTitle] = useState('');
   const [fileCost, setFileCost] = useState();
   const [description, setDescription] = useState('');
+  const [sport, setSport] = useState('');
   const router = useRouter();
+  const fileInputRef = useRef();
+
+  const provider = useProvider();
+  const { disconnect } = useDisconnect();
+  const { address, isConnected } = useAccount();
 
   const [URI, setURI] = useState();
 
@@ -68,7 +97,10 @@ const Upload = () => {
   }
 
   async function saveVideo() {
-    if (!file || !title || !description) return;
+    if (!file || !title || !sports?.[sport] || !description) {
+      alert('Missing a required field');
+      return;
+    }
     const tags = [
       { name: 'Content-Type', value: 'text/plain' },
       { name: 'App-Name', value: APP_NAME },
@@ -76,6 +108,7 @@ const Upload = () => {
 
     const video = {
       title,
+      sport: sports[sport],
       description,
       URI,
       createdAt: new Date(),
@@ -98,72 +131,142 @@ const Upload = () => {
     }
   }
 
-  if (!bundlrInstance) {
-    return (
-      <div className='pt-24'>
-        <div className='mx-5 my-4'>
-          <Select
-            onChange={({ value }) => setCurrency(value)}
-            options={currencyOptions}
-            defaultValue={{ value: currency, label: currency }}
-            classNamePrefix='select'
-            instanceId='currency'
-          />
-          <p>Currency: {currency}</p>
+  return (
+    <div className='flex flex-col pt-32'>
+      {!isConnected && (
+        <div className='flex items-center justify-center'>
+          <ConnectButton />
         </div>
-        <div className='flex justify-center px-5 py-3'>
-          <button className='' onClick={initializeBundlr}>
-            Connect Wallet
+      )}
+      {isConnected && (
+        <div className='flex items-center justify-center'>
+          <button
+            className='inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+            onClick={() => {
+              setBundlrInstance();
+              return disconnect();
+            }}
+          >
+            Disconnect Wallet and Bundlr
           </button>
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className='flex flex-col items-center justify-center pt-24'>
-      <h3 className=''>💰 Balance {Math.round(balance * 100) / 100}</h3>
-      <div className=''>
-        <p className=''>Add Video</p>
-        <div className=''>
-          <input type='file' onChange={onFileChange} />
+      )}
+      {isConnected && !bundlrInstance && (
+        <div className='flex items-center justify-center'>
+          <div className='mx-5 my-4'>
+            <Select
+              onChange={({ value }) => setCurrency(value)}
+              options={currencyOptions}
+              defaultValue={{ value: currency, label: currency }}
+              classNamePrefix='select'
+              instanceId='currency'
+            />
+            <p>Currency: {currency}</p>
+          </div>
+          <div className='flex justify-center px-5 py-3'>
+            <button
+              className='inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              onClick={() => initializeBundlr(provider)}
+            >
+              Connect Bundlr
+            </button>
+          </div>
         </div>
-        {localVideo && (
-          <video key={localVideo} width='520' controls className='mb-10'>
-            <source src={localVideo} type='video/mp4' />
-          </video>
-        )}
-        {fileCost && (
-          <h4>Cost to upload: {Math.round(fileCost * 1000) / 1000} MATIC</h4>
-        )}
-        <button className='' onClick={uploadFile}>
-          Upload Video
-        </button>
-        {URI && (
-          <div>
-            <p className=''>
-              <a href={URI}>{URI}</a>
-            </p>
-            <div className=''>
-              <p className={labelStyle}>Title</p>
+      )}
+      {isConnected && bundlrInstance && ALLOWED_UPLOADER_ADDRESS === address && (
+        <div className='flex flex-col items-center justify-center mt-8'>
+          <h3 className='py-4'>💰 Balance {Math.round(balance * 100) / 100}</h3>
+          <p className='py-4'>Add Video</p>
+          <div className='py-4'>
+            <label
+              htmlFor='file'
+              className='block text-sm font-medium text-gray-700'
+            >
+              Add Video
+            </label>
+            <div className='mt-1'>
               <input
-                className=''
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder='Video title'
+                ref={fileInputRef}
+                type='file'
+                name='file'
+                id='file'
+                className='block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                onChange={onFileChange}
+                accept='.mp4'
               />
-              <p className=''>Description</p>
-              <textarea
-                placeholder='Video description'
-                onChange={(e) => setDescription(e.target.value)}
-                className={textAreaStyle}
-              />
-              <button className='' onClick={saveVideo}>
-                Save Video
-              </button>
             </div>
           </div>
+          {localVideo && (
+            <>
+              <button
+                onClick={() => {
+                  fileInputRef.current.value = '';
+                  setFileCost();
+                  setLocalVideo();
+                  setFile();
+                  console.log('LOG: fileINputref', fileInputRef);
+                }}
+                className='my-4 inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              >
+                Remove Video
+              </button>
+              <video key={localVideo} width='520' controls className='mb-10'>
+                <source src={localVideo} type='video/mp4' />
+              </video>
+              {fileCost && (
+                <h4 className='py-4'>
+                  Cost to upload: {Math.round(fileCost * 1000) / 1000} MATIC
+                </h4>
+              )}
+              <button
+                className='inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                onClick={uploadFile}
+              >
+                Upload Video
+              </button>
+            </>
+          )}
+          {URI && (
+            <div>
+              <p className=''>
+                <a href={URI}>{URI}</a>
+              </p>
+              <div className=''>
+                <p className=''>Title</p>
+                <input
+                  className=''
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder='Video title'
+                />
+                <p>Sport</p>
+                <Select
+                  onChange={({ value }) => setSport(value)}
+                  options={sportOptions}
+                  classNamePrefix='select'
+                  instanceId='sport'
+                />
+                <p className=''>Description</p>
+                <textarea
+                  placeholder='Video description'
+                  onChange={(e) => setDescription(e.target.value)}
+                  className=''
+                />
+                <button
+                  className='inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                  onClick={saveVideo}
+                >
+                  Save Video
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      {isConnected &&
+        bundlrInstance &&
+        ALLOWED_UPLOADER_ADDRESS !== address && (
+          <p>Connected wallet is not allowed to upload videos</p>
         )}
-      </div>
     </div>
   );
 };

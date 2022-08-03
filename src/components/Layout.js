@@ -219,7 +219,7 @@ const Layout = ({ children }) => {
             </p>
             <p className='mt-3 text-lg font-medium leading-8 text-slate-700'>
               A collection of highlight videos spotlighting iconic moments in
-              ETSU Athletics history
+              East Tennessee State Athletics history
             </p>
           </div>
           <AboutSection className='hidden mt-12 lg:block' />
@@ -282,9 +282,9 @@ const Layout = ({ children }) => {
           </div>
         </div>
       </footer>
-      <div className='fixed inset-x-0 bottom-0 z-10 lg:left-112 xl:left-120'>
+      {/*<div className='fixed inset-x-0 bottom-0 z-10 lg:left-112 xl:left-120'>
         <VideoPlayer />
-      </div>
+                </div>*/}
     </>
   );
 };
