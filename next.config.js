@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
+
+const isProd = process.env.NODE_ENV === 'production';
+const prefixUrl = process.env.NEXT_PUBLIC_PREFIX_URL;
+
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   // trailingSlash: true,
+  assetPrefix: isProd ? prefixUrl : '',
   images: {
     loader: 'akamai',
     path: '/',
