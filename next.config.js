@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
   // trailingSlash: true,
   images: {
     loader: 'akamai',
-    path: '',
+    path: '/',
     domains: [
       'ipfs.infura.io',
       'place-hold.it',
