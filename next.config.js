@@ -12,9 +12,10 @@ const nextConfig = {
     loader: 'akamai',
     path: '/',
     domains: [
-      'ipfs.infura.io',
-      'place-hold.it',
-      'statics-polygon-lens-staging.s3.eu-west-1.amazonaws.com',
+      'arweave.net',
+      // 'ipfs.infura.io',
+      // 'place-hold.it',
+      // 'statics-polygon-lens-staging.s3.eu-west-1.amazonaws.com',
     ],
   },
   experimental: {
