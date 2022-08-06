@@ -1,6 +1,8 @@
 import Arweave from 'arweave';
 
-export const arweave = Arweave.init();
+export const arweave = Arweave.init({
+  host: 'arweave.net',
+});
 
 export const APP_NAME =
   process.env.NEXT_PUBLIC_ARWEAVE_APP_NAME || 'YOUR_APP_NAME';

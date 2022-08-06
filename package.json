@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@bundlr-network/client": "0.7.15",
+    "@bundlr-network/client": "0.7.16",
     "@emotion/css": "11.10.0",
     "@rainbow-me/rainbowkit": "0.4.5",
     "@tailwindcss/line-clamp": "0.4.0",
@@ -17,17 +17,17 @@
     "arweave": "1.11.4",
     "clsx": "1.2.1",
     "ethers": "5.6.9",
-    "next": "12.2.3",
+    "next": "12.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-select": "5.4.0",
-    "wagmi": "0.6.0"
+    "wagmi": "0.6.1"
   },
   "devDependencies": {
     "autoprefixer": "10.4.8",
     "eslint": "8.21.0",
-    "eslint-config-next": "12.2.3",
-    "postcss": "8.4.14",
-    "tailwindcss": "3.1.7"
+    "eslint-config-next": "12.2.4",
+    "postcss": "8.4.16",
+    "tailwindcss": "3.1.8"
   }
 }

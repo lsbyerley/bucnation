@@ -76,6 +76,7 @@ export default function Home() {
               <div className=''>
                 <h3 className=''>{video.title}</h3>
               </div>
+              <p>{video.sport}</p>
               <p className=''>{video.description}</p>
             </div>
           ))}
