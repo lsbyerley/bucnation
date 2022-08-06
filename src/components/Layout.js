@@ -178,7 +178,7 @@ function AboutSection(props) {
 }
 
 const Layout = ({ children }) => {
-  let hosts = ['lsbyerley'];
+  let hosts = [{ name: 'lucasb', link: 'https://twitter.com/lsbyerley' }];
 
   return (
     <>
@@ -187,13 +187,15 @@ const Layout = ({ children }) => {
           <span className='font-mono text-slate-500'>Made by</span>
           <span className='flex gap-6 mt-6 font-bold text-slate-900'>
             {hosts.map((host, hostIndex) => (
-              <Fragment key={host}>
+              <Fragment key={host.name}>
                 {hostIndex !== 0 && (
                   <span aria-hidden='true' className='text-slate-400'>
                     /
                   </span>
                 )}
-                {host}
+                <a href={host.link} target='_blank' rel='noreferrer noopener'>
+                  {host.name}
+                </a>
               </Fragment>
             ))}
           </span>
@@ -270,13 +272,15 @@ const Layout = ({ children }) => {
           </h2>
           <div className='flex gap-6 mt-2 text-sm font-bold leading-7 text-slate-900'>
             {hosts.map((host, hostIndex) => (
-              <Fragment key={host}>
+              <Fragment key={host.name}>
                 {hostIndex !== 0 && (
                   <span aria-hidden='true' className='text-slate-400'>
                     /
                   </span>
                 )}
-                {host}
+                <a href={host.link} target='_blank' rel='noreferrer noopener'>
+                  {host.name}
+                </a>
               </Fragment>
             ))}
           </div>
