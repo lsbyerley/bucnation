@@ -167,7 +167,7 @@ function AboutSection(props) {
       {!isExpanded && (
         <button
           type='button'
-          className='hidden mt-2 text-sm font-bold leading-6 text-pink-500 hover:text-pink-700 active:text-pink-900 lg:inline-block'
+          className='hidden mt-2 text-sm font-bold leading-6 text-blue-500 hover:text-blue-700 active:text-blue-900 lg:inline-block'
           onClick={() => setIsExpanded(true)}
         >
           Show more
