@@ -53,6 +53,7 @@ const Upload = () => {
   const [title, setTitle] = useState('');
   const [fileCost, setFileCost] = useState();
   const [description, setDescription] = useState('');
+  const [gameDate, setGameDate] = useState('');
   const [sport, setSport] = useState('');
   const router = useRouter();
   const fileInputRef = useRef();
@@ -99,7 +100,7 @@ const Upload = () => {
   }
 
   async function saveVideo() {
-    if (!file || !title || !sports?.[sport] || !description) {
+    if (!file || !title || !sports?.[sport] || !description || !gameDate) {
       alert('Missing a required field');
       return;
     }
@@ -110,9 +111,12 @@ const Upload = () => {
 
     const video = {
       title,
+      gameDate,
       sport: sports[sport],
       description,
       URI,
+      uploadCost: fileCost,
+      uploadCurrency: currency,
       createdAt: new Date(),
       createdBy: bundlrInstance.address,
     };
@@ -264,6 +268,12 @@ const Upload = () => {
                         className=''
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder='Video title'
+                      />
+                      <p className=''>Game Date</p>
+                      <input
+                        className=''
+                        onChange={(e) => setGameDate(e.target.value)}
+                        placeholder='Video game date - August 6, 2022'
                       />
                       <p>Sport</p>
                       <Select
