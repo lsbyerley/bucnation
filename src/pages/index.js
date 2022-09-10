@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { arweave, query, getVideoMeta } from '../utils';
+import { arweave, query, getVideoMeta } from '@/utils';
 
 import Container from '@/components/Container';
 import { FormattedDate } from '@/components/FormattedDate';
@@ -76,7 +76,7 @@ export default function Home() {
 
   const VideoEntry = ({ video }) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    let date = new Date(video.createdAt);
+    let date = new Date(video.gameDate);
 
     let videoPlayerData = useMemo(
       () => ({
