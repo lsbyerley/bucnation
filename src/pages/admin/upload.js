@@ -1,7 +1,7 @@
 import { useState, useContext, useRef } from 'react';
 import Head from 'next/head';
-import { AppContext } from '../context';
-import { APP_NAME } from '../utils';
+import { AppContext } from '@/context';
+import { APP_NAME } from '@/utils';
 import { useRouter } from 'next/router';
 import { utils } from 'ethers';
 import Select from 'react-select';

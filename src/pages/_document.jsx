@@ -1,17 +1,17 @@
-import { Head, Html, Main, NextScript } from 'next/document'
+import { Head, Html, Main, NextScript } from 'next/document';
 
 export default function Document() {
   return (
-    <Html className="bg-white antialiased" lang="en">
+    <Html className='antialiased bg-white' lang='en'>
       <Head>
         <link
-          rel="preconnect"
-          href="https://cdn.fontshare.com"
-          crossOrigin="anonymous"
+          rel='preconnect'
+          href='https://cdn.fontshare.com'
+          crossOrigin='anonymous'
         />
         <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap"
+          rel='stylesheet'
+          href='https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap'
         />
       </Head>
       <body>
@@ -19,5 +19,5 @@ export default function Document() {
         <NextScript />
       </body>
     </Html>
-  )
+  );
 }
