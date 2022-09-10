@@ -10,6 +10,7 @@ import { chain, createClient, WagmiConfig, configureChains } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { VideoProvider } from '@/components/VideoProvider';
 
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID;
 
@@ -76,9 +77,11 @@ const MyApp = ({ Component, pageProps }) => {
             setCurrency,
           }}
         >
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <VideoProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </VideoProvider>
         </AppContext.Provider>
       </RainbowKitProvider>
     </WagmiConfig>

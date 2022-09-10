@@ -3,7 +3,7 @@ import Image from 'next/future/image';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import VideoPlayer from '@/components/VideoPlayer';
+import { VideoPlayer } from '@/components/player/VideoPlayer';
 import posterImage from '@/images/poster.png';
 
 function randomBetween(min, max, seed = 1) {
@@ -286,9 +286,6 @@ const Layout = ({ children }) => {
           </div>
         </div>
       </footer>
-      {/*<div className='fixed inset-x-0 bottom-0 z-10 lg:left-112 xl:left-120'>
-        <VideoPlayer />
-                </div>*/}
     </>
   );
 };
